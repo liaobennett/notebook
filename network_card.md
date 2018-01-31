@@ -42,6 +42,6 @@ Transmit:
 
 http://www.onlamp.com/pub/a/linux/2000/11/16/LinuxAdmin.html
 
-## /sys/class/net/*/statistics/*
+## /sys/class/net/*amp;/statistics/*amp;
 
 
