@@ -23,6 +23,52 @@
 
 在Linux下，raw格式的数据通常可以通过/proc/net/dev获得。在Windows平台，netstat信息可以通过IP Helper API的GetTcpTable和GetUdpTable函数获得。
 
+## ss（socket statistics）参数和使用
+
+常用参数和netstat类似，如-anp
+
+-a显示所有的sockets
+
+-l显示正在监听的
+
+-n显示数字IP和端口，不通过域名服务器
+
+-p显示使用socket的对应的程序
+
+-t只显示TCP sockets
+
+-u只显示UDP sockets
+
+-4 -6 只显示v4或v6V版本的sockets
+
+-s打印出统计信息。这个选项不解析从各种源获得的socket。对于解析/proc/net/top大量的sockets计数时很有效
+
+-0 显示PACKET sockets
+
+-w 只显示RAW sockets
+
+-x只显示UNIX域sockets
+
+-r尝试进行域名解析，地址/端口
+
+ss比netstat快的主要原因是，netstat是遍历/proc下面每个PID目录，ss直接读/proc/net下面的统计信息。所以ss执行的时候消耗资源以及消耗的时间都比netstat少很多。
+
+当服务器的socket连接数量非常大时（如上万个），无论是使用netstat命令还是直接cat /proc/net/tcp执行速度都会很慢，相比之下ss可以节省很多时间。
+
+ss快的秘诀在于，它利用了TCP协议栈中tcp_diag，这是一个用于分析统计的模块，可以获得Linux内核中的第一手信息。如果系统中没有tcp_diag，ss也可以正常运行，只是效率会变得稍微慢但仍然比netstat要快。
+
+### netstat属于net-tools工具集，ss属于ipoute工具集。替换方案如下：
+
+| 用途  | net-tool  | iproute2 |
+| :------------ |:---------------:| -----:|
+| 地址與鏈路配置 | ifconfig | ip addr,ip link |
+| 路由表 | route | ip route  |
+| 鄰居 | arp | ip neigh |
+| VLAN | vconfig | ip link |
+| 隧道 | iptunnel | ip tunnel |
+| 組播 | ipmaddr | ip maddr |
+| 統計 | netstat | ss |
+
 ## Linux 网络常见监控项以及报错
 ### 查看丢包
 网络丢包会有多种可能，例如，交换机，上连和下连端口的流量跑满或链路有问题，那么数据包就有可能会被交换机丢掉；负载均衡设备，包括了硬件设备以及软件的负载均衡。在此，我们仅查看本机可能导致的掉包。
