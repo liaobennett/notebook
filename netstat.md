@@ -108,3 +108,38 @@ static inline bool tcp_too_many_orphans(struct sock *sk, int shift)
 ### Procfs 文件系统
 
 * /proc/net/tcp：记录 TCP 的状态信息。
+
+# TCP 状态排查
+
+可以通过如下命令查看 TCP 状态。
+
+----- 查看链接状态，并对其进行统计，如下的两种方法相同
+
+```
+$ netstat -atn | awk '/^tcp/ {++s[$NF]} END {for(key in s) print s[key], "\t", key}' | sort -nr
+$ ss -ant | awk ' {++s[$1]} END {for(key in s) print s[key], "\t", key}' | sort -nr
+```
+
+----- 查找较多time_wait连接
+
+```
+$ netstat -n|grep TIME_WAIT|awk '{print $5}'|sort|uniq -c|sort -rn|head -n20
+```
+
+----- 对接的IP进行排序
+
+```
+$ netstat -ntu | awk '/^tcp/ {print $5}' | cut -d: -f1 | sort | uniq -c | sort -n
+```
+
+----- 查看80端口连接数最多的20个IP
+
+```
+$ netstat -ant |awk '/:80/{split($5,ip,":");++A[ip[1]]}END{for(i in A) print A[i],i}' |sort -rn|head -n20
+```
+
+----- 80端口的各个TCP链接状态
+
+```
+$ netstat -n | grep `hostname -i`:80 |awk '/^tcp/{++S[$NF]}END{for (key in S) print key,S[key]}'
+```
