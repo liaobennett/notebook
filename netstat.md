@@ -307,3 +307,6 @@ $ netstat -n | grep `hostname -i`:80 |awk '/^tcp/{++S[$NF]}END{for (key in S) pr
 * 遠控卡中的異常日誌。
 
 * 網卡的工作狀態是否正常。
+
+# 包丟在什幺地方
+想要詳細瞭解 linux 系統在執行哪個函數時丟包的話，可以使用 ``` dropwatch ``` 工具，它監聽系統丟包信息，並打印出丟包發生的函數地址：
