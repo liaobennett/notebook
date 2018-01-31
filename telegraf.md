@@ -1,6 +1,7 @@
 # telegraf.conf
 
 ```
+[global_tags]
 [agent]
   interval = "1000ms"
   round_interval = false
