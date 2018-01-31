@@ -18,3 +18,17 @@
 ``` $ cat /proc/net/softnet_stat ```
 
 每个 CPU 有一行统计数据，第二列是对应 CPU 丢弃的数据包数量。
+
+### 应用程序处理不过来，操作系统丢弃
+
+内核中记录了两个计数器：
+
+* ListenOverflows：当 socket 的 listen queue 已满，当新增一个连接请求时，应用程序来不及处理；
+
+* ListenDrops：包含上面的情况，除此之外，当内存不够无法为新的连接分配 socket 相关的数据结构时，也会加 1，当然还有别的异常情况下会增加 1。
+
+分别对应下面文件中的第 21 列（ListenOverflows）和第 22 列（ListenDrops），可以通过如下命令查看：
+
+``` $ cat /proc/net/netstat | awk '/TcpExt/ { print $21,$22 }' ```
+
+如果使用 netstat 命令，有丢包时会看到 “times the listen queue of a socket overflowed” 以及 “SYNs to LISTEN sockets ignored” 对应行前面的数字；如果值为 0 则不会输出对应的行。
