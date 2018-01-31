@@ -1,5 +1,42 @@
-# netstat
+# 網路
 ## netstat -st输出的两个重要信息来源分别是/proc/net/snmp和/proc/net/netstat
+
+## 从 /proc/net/snmp 可以拿到这些指标：
+
+### tcp
+
+* ActiveOpens:主动打开的tcp连接数量。
+* * PassiveOpens:被动打开的tcp连接数量。
+* InSegs: 收到的tcp报文数量。
+* OutSegs:发出的tcp报文数量。
+* EstabResets: established 中发生的 reset。
+* AttemptFails: 连接失败的数量。
+* CurrEstab:当前状态为ESTABLISHED的tcp连接数。
+* RetransSegs: 重传的报文数量。
+* retran:系统的重传率 (RetransSegs－last RetransSegs) ／ (OutSegs－last OutSegs) * 100%
+
+### udp
+
+* InDatagrams
+* OutDatagrams
+* NoPorts: 目的地址或者端口不存在。
+* InErrors： 无效数据包。
+* RcvbufErrors：内核的 buffer 满了导致的接收失败。
+* SndbufErrors：同上。
+* InCsumErrors：checksum 错误的 udp 包数量。
+
+还可以用 ss 把这些 tcp 链接的信息采集起来：
+
+* ss.orphaned
+* ss.closed
+* ss.timewait
+* ss.slabinfo.timewait
+* ss.synrecv
+* ss.estab
+
+collectd 默认会把每个 TCP 状态的连接数都采集下来。
+
+这些指标可能不需要报警。但是收集起来用来排查问题、查看网络负载很有用。
 
 ## netstat参数和使用
 
@@ -172,6 +209,14 @@ static inline bool tcp_too_many_orphans(struct sock *sk, int shift)
 
 如果是这样，那么就可以根据具体的情况，将 tcp_max_orphans 值适当调大。
 
+### sysctl
+有些 sysctl 的配置项的值也需要关心下：
+
+* net.netfilter.nf_conntrack_max
+* net.netfilter.nf_conntrack_count
+* fs.file-max 、fs.file-nr 这两个参数可能更需要关注单个进程内的值。
+还有一些我们自己调整过的、对业务会有影响的项。比如 ip_forward.
+
 ### Procfs 文件系统
 
 * /proc/net/tcp：记录 TCP 的状态信息。
@@ -210,3 +255,16 @@ $ netstat -ant |awk '/:80/{split($5,ip,":");++A[ip[1]]}END{for(i in A) print A[i
 ```
 $ netstat -n | grep `hostname -i`:80 |awk '/^tcp/{++S[$NF]}END{for (key in S) print key,S[key]}'
 ```
+
+# 硬件层面
+* 电源健康状态。是不是两路电都在。
+
+* 硬盘的健康状态。 分区是否可写。
+
+* raid 卡的健康状态。
+
+* 远控卡是不是可用。
+
+* 远控卡中的异常日志。
+
+* 网卡的工作状态是否正常。
