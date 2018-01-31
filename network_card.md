@@ -15,36 +15,27 @@ eno33554960:  300255    3030    0    0    0     0          0         0     8142 
 
 根據proc/net/dev中每一項的含義是：
 
-* Receive
+Receive :
 
-** bytes: The total number of bytes of data transmitted or received by the interface.（介面發送或接收的資料的總位元組數）
+* bytes: The total number of bytes of data transmitted or received by the interface.（介面發送或接收的資料的總位元組數）
+* packets: The total number of packets of data transmitted or received by the interface.（介面發送或接收的資料包總數）
+* errs: The total number of transmit or receive errors detected by the device driver.（由設備驅動程式檢測到的發送或接收錯誤的總數）
+* drop: The total number of packets dropped by the device driver.（設備驅動程式丟棄的資料包總數）
+* fifo: The number of FIFO buffer errors.（FIFO緩衝區錯誤的數量）
+* frame: The number of packet framing errors.（分組幀錯誤的數量）
+* colls: The number of collisions detected on the interface.（介面上檢測到的衝突數）
+* compressed: The number of compressed packets transmitted or received by the device driver. (This appears to be unused in the 2.2.15 kernel.)（設備驅動程式發送或接收的壓縮資料包數）
+* carrier: The number of carrier losses detected by the device driver.（由設備驅動程式檢測到的載波損耗的數量）
+* multicast: The number of multicast frames transmitted or received by the device driver.（設備驅動程式發送或接收的多播幀數）
 
-** packets: The total number of packets of data transmitted or received by the interface.（介面發送或接收的資料包總數）
-** errs: The total number of transmit or receive errors detected by the device driver.（由設備驅動程式檢測到的發送或接收錯誤的總數）
-** drop: The total number of packets dropped by the device driver.（設備驅動程式丟棄的資料包總數）
-** fifo: The number of FIFO buffer errors.（FIFO緩衝區錯誤的數量）
-** frame: The number of packet framing errors.（分組幀錯誤的數量）
-** colls: The number of collisions detected on the interface.（介面上檢測到的衝突數）
-** compressed: The number of compressed packets transmitted or received by the device driver. (This appears to be unused in the 2.2.15 kernel.)（設備驅動程式發送或接收的壓縮資料包數）
-** carrier: The number of carrier losses detected by the device driver.（由設備驅動程式檢測到的載波損耗的數量）
-** multicast: The number of multicast frames transmitted or received by the device driver.（設備驅動程式發送或接收的多播幀數）
-
-* Transmit
-
-** bytes:
-
-** packets: 
-
-** errs: 
-
-** drop: 
-
-** fifo: 
-
-** colls: 
-
-** carrier: 
-
-** compressed: 
+Transmit:
+* bytes:
+* packets: 
+* errs: 
+* drop: 
+* fifo: 
+* colls: 
+* carrier: 
+* compressed: 
 
 http://www.onlamp.com/pub/a/linux/2000/11/16/LinuxAdmin.html
