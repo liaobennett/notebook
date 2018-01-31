@@ -44,4 +44,41 @@ http://www.onlamp.com/pub/a/linux/2000/11/16/LinuxAdmin.html
 
 ## /sys/class/net/*amp;/statistics/*amp;
 
+這些指標是網卡的統計資料，可以用 ethtool -S ethx 看到。
+/sys/class/net/*/statistics/*。
 
+* net.if.in.bytes : 收到的資料的總 bytes.
+
+* net.if.in.dropped: 進入了 ring buffer， 在拷貝到記憶體的時候被丟了。
+
+* net.if.in.errors: 收到的錯誤包的總數。錯誤包包括：crc 校驗錯誤、幀同步錯誤、ring buffer溢出等。
+
+* net.if.in.fifo.errs: 這個是 ifconfig 裡看到的 overruns.表示資料包沒到 ring buffer 就被丟了。也就是 cpu 來不及處理 ringbuffer 裡的資料，通常在網卡壓力大、沒有做affinity的時候會發生。
+
+* net.if.in.frame.errs: misaligned frames. frame 的長度（bit）不能被 8 整除。
+
+* net.if.in.multicast: 組播。
+
+* net.if.in.packets: 收到的 packets 數量統計。
+
+* net.if.out.bytes
+
+* net.if.out.carrier.errs: 這個意味著實體層出問題了。比如網卡的工作模式不對。
+
+* net.if.out.collisions： 因為 CSMA/CD 造成的傳輸錯誤。
+
+* net.if.out.dropped
+
+* net.if.out.errors
+
+* net.if.out.fifo.errs
+
+* net.if.out.packets
+
+* net.if.total.bytes
+
+* net.if.total.dropped
+
+網卡的工作模式。全雙工千兆/萬兆。
+
+網路壓力大的服務，是有必要做中斷的 affinity 和提高 ring buffer 值的。
