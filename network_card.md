@@ -18,6 +18,7 @@ eno33554960:  300255    3030    0    0    0     0          0         0     8142 
 * Receive
 
 ** bytes: The total number of bytes of data transmitted or received by the interface.（介面發送或接收的資料的總位元組數）
+
 ** packets: The total number of packets of data transmitted or received by the interface.（介面發送或接收的資料包總數）
 ** errs: The total number of transmit or receive errors detected by the device driver.（由設備驅動程式檢測到的發送或接收錯誤的總數）
 ** drop: The total number of packets dropped by the device driver.（設備驅動程式丟棄的資料包總數）
