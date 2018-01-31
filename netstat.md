@@ -1,31 +1,31 @@
 # 網路
-## netstat -st输出的两个重要信息来源分别是/proc/net/snmp和/proc/net/netstat
+## netstat -st輸出的兩個重要資訊來源分別是/proc/net/snmp和/proc/net/netstat
 
-## 从 /proc/net/snmp 可以拿到这些指标：
+## 從 /proc/net/snmp 可以拿到這些指標：
 
 ### tcp
 
-* ActiveOpens:主动打开的tcp连接数量。
-* PassiveOpens:被动打开的tcp连接数量。
-* InSegs: 收到的tcp报文数量。
-* OutSegs:发出的tcp报文数量。
-* EstabResets: established 中发生的 reset。
-* AttemptFails: 连接失败的数量。
-* CurrEstab:当前状态为ESTABLISHED的tcp连接数。
-* RetransSegs: 重传的报文数量。
-* retran:系统的重传率 (RetransSegs－last RetransSegs) ／ (OutSegs－last OutSegs) * 100%
+* ActiveOpens:主動打開的tcp連接數量。
+* PassiveOpens:被動打開的tcp連接數量。
+* InSegs: 收到的tcp報文數量。
+* OutSegs:發出的tcp報文數量。
+* EstabResets: established 中發生的 reset。
+* AttemptFails: 連接失敗的數量。
+* CurrEstab:當前狀態為ESTABLISHED的tcp連接數。
+* RetransSegs: 重傳的報文數量。
+* retran:系統的重傳率 (RetransSegs－last RetransSegs) ／ (OutSegs－last OutSegs) * 100%
 
 ### udp
 
 * InDatagrams
 * OutDatagrams
-* NoPorts: 目的地址或者端口不存在。
-* InErrors： 无效数据包。
-* RcvbufErrors：内核的 buffer 满了导致的接收失败。
+* NoPorts: 目的地址或者埠不存在。
+* InErrors： 無效數據包。
+* RcvbufErrors：內核的 buffer 滿了導致的接收失敗。
 * SndbufErrors：同上。
-* InCsumErrors：checksum 错误的 udp 包数量。
+* InCsumErrors：checksum 錯誤的 udp 包數量。
 
-还可以用 ss 把这些 tcp 链接的信息采集起来：
+還可以用 ss 把這些 tcp 連結的資訊採集起來：
 
 * ss.orphaned
 * ss.closed
@@ -34,32 +34,32 @@
 * ss.synrecv
 * ss.estab
 
-collectd 默认会把每个 TCP 状态的连接数都采集下来。
+collectd 預設會把每個 TCP 狀態的連接數都採集下來。
 
-这些指标可能不需要报警。但是收集起来用来排查问题、查看网络负载很有用。
+這些指標可能不需要報警。但是收集起來用來排查問題、查看網路負載很有用。
 
-### 网卡
-这些指标是网卡的统计数据，可以用 ethtool -S ethx 看到。数据源来自：/proc/net/dev和 /sys/class/net/*/statistics/*。
+### 網卡
+這些指標是網卡的統計資料，可以用 ethtool -S ethx 看到。資料來源來自：/proc/net/dev和 /sys/class/net/*/statistics/*。
 
-* net.if.in.bytes : 收到的数据的总 bytes.
+* net.if.in.bytes : 收到的資料的總 bytes.
 
-* net.if.in.dropped: 进入了 ring buffer， 在拷贝到内存的时候被丢了。
+* net.if.in.dropped: 進入了 ring buffer， 在拷貝到記憶體的時候被丟了。
 
-* net.if.in.errors: 收到的错误包的总数。错误包包括：crc 校验错误、帧同步错误、ring buffer溢出等。
+* net.if.in.errors: 收到的錯誤包的總數。錯誤包包括：crc 校驗錯誤、幀同步錯誤、ring buffer溢出等。
 
-* net.if.in.fifo.errs: 这个是 ifconfig 里看到的 overruns.表示数据包没到 ring buffer 就被丢了。也就是 cpu 来不及处理 ringbuffer 里的数据，通常在网卡压力大、没有做affinity的时候会发生。
+* net.if.in.fifo.errs: 這個是 ifconfig 裡看到的 overruns.表示資料包沒到 ring buffer 就被丟了。也就是 cpu 來不及處理 ringbuffer 裡的資料，通常在網卡壓力大、沒有做affinity的時候會發生。
 
-* net.if.in.frame.errs: misaligned frames. frame 的长度（bit）不能被 8 整除。
+* net.if.in.frame.errs: misaligned frames. frame 的長度（bit）不能被 8 整除。
 
-* net.if.in.multicast: 组播。
+* net.if.in.multicast: 組播。
 
-* net.if.in.packets: 收到的 packets 数量统计。
+* net.if.in.packets: 收到的 packets 數量統計。
 
 * net.if.out.bytes
 
-* net.if.out.carrier.errs: 这个意味着物理层出问题了。比如网卡的工作模式不对。
+* net.if.out.carrier.errs: 這個意味著實體層出問題了。比如網卡的工作模式不對。
 
-* net.if.out.collisions： 因为 CSMA/CD 造成的传输错误。
+* net.if.out.collisions： 因為 CSMA/CD 造成的傳輸錯誤。
 
 * net.if.out.dropped
 
@@ -73,128 +73,128 @@ collectd 默认会把每个 TCP 状态的连接数都采集下来。
 
 * net.if.total.dropped
 
-网卡的工作模式。全双工千兆/万兆。
+網卡的工作模式。全雙工千兆/萬兆。
 
-网络压力大的服务，是有必要做中断的 affinity 和提高 ring buffer 值的。
+網路壓力大的服務，是有必要做中斷的 affinity 和提高 ring buffer 值的。
 
-## netstat参数和使用
+## netstat參數和使用
 
-常用参数-anplt
+常用參數-anplt
 
--a 显示所有活动的连接以及本机侦听的TCP、UDP端口
+-a 顯示所有活動的連接以及本機偵聽的TCP、UDP埠
 
--l 显示监听的server port
+-l 顯示監聽的server port
 
--n 直接使用IP地址，不通过域名服务器
+-n 直接使用IP位址，不通過功能變數名稱伺服器
 
--p 正在使用Socket的程序PID和程序名称
+-p 正在使用Socket的程式PID和程式名稱
 
--r 显示路由表
+-r 顯示路由表
 
--t 显示TCP传输协议的连线状况
+-t 顯示TCP傳輸協定的連線狀況
 
--u 显示UDP传输协议的连线状况
+-u 顯示UDP傳輸協定的連線狀況
 
--w 显示RAW传输协议的连线状况
+-w 顯示RAW傳輸協定的連線狀況
 
-在Linux下，raw格式的数据通常可以通过/proc/net/dev获得。在Windows平台，netstat信息可以通过IP Helper API的GetTcpTable和GetUdpTable函数获得。
+在Linux下，raw格式的資料通常可以通過/proc/net/dev獲得。在Windows平臺，netstat資訊可以通過IP Helper API的GetTcpTable和GetUdpTable函數獲得。
 
-## ss（socket statistics）参数和使用
+## ss（socket statistics）參數和使用
 
-常用参数和netstat类似，如-anp
+常用參數和netstat類似，如-anp
 
--a显示所有的sockets
+-a顯示所有的sockets
 
--l显示正在监听的
+-l顯示正在監聽的
 
--n显示数字IP和端口，不通过域名服务器
+-n顯示數位IP和埠，不通過功能變數名稱伺服器
 
--p显示使用socket的对应的程序
+-p顯示使用socket的對應的程式
 
--t只显示TCP sockets
+-t只顯示TCP sockets
 
--u只显示UDP sockets
+-u只顯示UDP sockets
 
--4 -6 只显示v4或v6V版本的sockets
+-4 -6 只顯示v4或v6V版本的sockets
 
--s打印出统计信息。这个选项不解析从各种源获得的socket。对于解析/proc/net/top大量的sockets计数时很有效
+-s列印出統計資訊。這個選項不解析從各種源獲得的socket。對於解析/proc/net/top大量的sockets計數時很有效
 
--0 显示PACKET sockets
+-0 顯示PACKET sockets
 
--w 只显示RAW sockets
+-w 只顯示RAW sockets
 
--x只显示UNIX域sockets
+-x只顯示UNIX域sockets
 
--r尝试进行域名解析，地址/端口
+-r嘗試進行功能變數名稱解析，位址/埠
 
-ss比netstat快的主要原因是，netstat是遍历/proc下面每个PID目录，ss直接读/proc/net下面的统计信息。所以ss执行的时候消耗资源以及消耗的时间都比netstat少很多。
+ss比netstat快的主要原因是，netstat是遍歷/proc下面每個PID目錄，ss直接讀/proc/net下面的統計資訊。所以ss執行的時候消耗資源以及消耗的時間都比netstat少很多。
 
-当服务器的socket连接数量非常大时（如上万个），无论是使用netstat命令还是直接cat /proc/net/tcp执行速度都会很慢，相比之下ss可以节省很多时间。
+當伺服器的socket連接數量非常大時（如上萬個），無論是使用netstat命令還是直接cat /proc/net/tcp執行速度都會很慢，相比之下ss可以節省很多時間。
 
-ss快的秘诀在于，它利用了TCP协议栈中tcp_diag，这是一个用于分析统计的模块，可以获得Linux内核中的第一手信息。如果系统中没有tcp_diag，ss也可以正常运行，只是效率会变得稍微慢但仍然比netstat要快。
+ss快的秘訣在於，它利用了TCP協議棧中tcp_diag，這是一個用於分析統計的模組，可以獲得Linux內核中的第一手資訊。如果系統中沒有tcp_diag，ss也可以正常運行，只是效率會變得稍微慢但仍然比netstat要快。
 
-### netstat属于net-tools工具集，ss属于ipoute工具集。替换方案如下：
+### netstat屬於net-tools工具集，ss屬於ipoute工具集。替換方案如下：
 
 | 用途  | net-tool  | iproute2 |
 | :------------ |:---------------:| -----:|
-| 地址與鏈路配置 | ifconfig | ip addr,ip link |
-| 路由表 | route | ip route  |
+| 位址與鏈路配置 | ifconfig | ip addr,ip link |
+| 路由表 | route | ip route  |
 | 鄰居 | arp | ip neigh |
 | VLAN | vconfig | ip link |
 | 隧道 | iptunnel | ip tunnel |
 | 組播 | ipmaddr | ip maddr |
 | 統計 | netstat | ss |
 
-## Linux 网络常见监控项以及报错
-### 查看丢包
-网络丢包会有多种可能，例如，交换机，上连和下连端口的流量跑满或链路有问题，那么数据包就有可能会被交换机丢掉；负载均衡设备，包括了硬件设备以及软件的负载均衡。在此，我们仅查看本机可能导致的掉包。
+## Linux 網路常見監控項以及報錯
+### 查看丟包
+網路丟包會有多種可能，例如，交換機，上連和下連埠的流量跑滿或鏈路有問題，那麼資料包就有可能會被交換機丟掉；負載均衡設備，包括了硬體設備以及軟體的負載均衡。在此，我們僅查看本機可能導致的掉包。
 
-### 操作系统处理不过来，丢弃数据
-有两种情况，一是网卡发现操作系统处理不过来，丢数据包，可以读取下面的文件：
+### 作業系統處理不過來，丟棄資料
+有兩種情況，一是網卡發現作業系統處理不過來，丟資料包，可以讀取下面的檔：
 
 ```
 $ cat /proc/net/dev
 ```
 
-每个网络接口一行统计数据，第 4 列（errs）是接收出错的数据包数量，第 5 列（drop）是接收不过来丢弃的数量。
+每個網路介面一行統計資料，第 4 列（errs）是接收出錯的資料包數量，第 5 列（drop）是接收不過來丟棄的數量。
 
-第二部分是传统非 NAPI 接口实现的网卡驱动，每个 CPU 有一个队列，当在队列中缓存的数据包数量超过 net.core.netdev_max_backlog 时，网卡驱动程序会丢掉数据包，这个见下面的文件：
+第二部分是傳統非 NAPI 介面實現的網卡驅動，每個 CPU 有一個佇列，當在佇列中緩存的資料包數量超過 net.core.netdev_max_backlog 時，網路卡驅動程式會丟掉資料包，這個見下面的檔：
 
 ```
 $ cat /proc/net/softnet_stat
 ```
 
-每个 CPU 有一行统计数据，第二列是对应 CPU 丢弃的数据包数量。
+每個 CPU 有一行統計資料，第二列是對應 CPU 丟棄的資料包數量。
 
-### 应用程序处理不过来，操作系统丢弃
+### 應用程式處理不過來，作業系統丟棄
 
-内核中记录了两个计数器：
+內核中記錄了兩個計數器：
 
-* ListenOverflows：当 socket 的 listen queue 已满，当新增一个连接请求时，应用程序来不及处理；
+* ListenOverflows：當 socket 的 listen queue 已滿，當新增一個連接請求時，應用程式來不及處理；
 
-* ListenDrops：包含上面的情况，除此之外，当内存不够无法为新的连接分配 socket 相关的数据结构时，也会加 1，当然还有别的异常情况下会增加 1。
+* ListenDrops：包含上面的情況，除此之外，當記憶體不夠無法為新的連接分配 socket 相關的資料結構時，也會加 1，當然還有別的異常情況下會增加 1。
 
-分别对应下面文件中的第 21 列（ListenOverflows）和第 22 列（ListenDrops），可以通过如下命令查看：
+分別對應下面文件中的第 21 列（ListenOverflows）和第 22 列（ListenDrops），可以通過如下命令查看：
 
 ```
 $ cat /proc/net/netstat | awk '/TcpExt/ { print $21,$22 }'
 ```
 
-如果使用 netstat 命令，有丢包时会看到 “times the listen queue of a socket overflowed” 以及 “SYNs to LISTEN sockets ignored” 对应行前面的数字；如果值为 0 则不会输出对应的行。
+如果使用 netstat 命令，有丟包時會看到 “times the listen queue of a socket overflowed” 以及 “SYNs to LISTEN sockets ignored” 對應行前面的數位；如果值為 0 則不會輸出對應的行。
 
 ### Out of memory
 
-如上所示，出现内存不足可能会有两种情况：
+如上所示，出現記憶體不足可能會有兩種情況：
 
-* 有太多的 orphan sockets，通常对于一些前端的服务器经常会出现这种情况。
+* 有太多的 orphan sockets，通常對於一些前端的伺服器經常會出現這種情況。
 
-* 分配给 TCP 的内存确实较少，从而导致内存不足。
+* 分配給 TCP 的記憶體確實較少，從而導致記憶體不足。
 
-#### 内存不足
+#### 記憶體不足
 
-这个比较好排查，只需要查看一下实际分配给 TCP 多少内存，现在时用了多少内存即可。需要注意的是，通常的配置项使用的单位是 Bytes，在此用的是 Pages，通常为 4K 。
+這個比較好排查，只需要查看一下實際分配給 TCP 多少記憶體，現在時用了多少記憶體即可。需要注意的是，通常的配置項使用的單位是 Bytes，在此用的是 Pages，通常為 4K 。
 
-先查看下给 TCP 分配了多少内存。
+先查看下給 TCP 分配了多少記憶體。
 
 ```
 $ cat /proc/net/sockstat
@@ -206,15 +206,15 @@ RAW: inuse 1
 FRAG: inuse 0 memory 0
 ```
 
-其中的 mem 表示使用了多少 Pages，如果相比 tcp_mem 的配置来说还很小，那么就有可能是由于 orphan sockets 导致的。
+其中的 mem 表示使用了多少 Pages，如果相比 tcp_mem 的配置來說還很小，那麼就有可能是由於 orphan sockets 導致的。
 
 #### orphan sockets
 
-首先介绍一下什么是 orphan sockets，简单来说就是该 socket 不与任何一个文件描述符相关联。例如，当应用调用 close() 关闭一个链接时，此时该 socket 就成为了 orphan，但是该 sock 仍然会保留一段时间，直到最后根据 TCP 协议结束。
+首先介紹一下什麼是 orphan sockets，簡單來說就是該 socket 不與任何一個檔描述符相關聯。例如，當應用調用 close() 關閉一個連結時，此時該 socket 就成為了 orphan，但是該 sock 仍然會保留一段時間，直到最後根據 TCP 協定結束。
 
-实际上 orphan socket 对于应用来说是无用的，因此内核希望尽可能减小 orphan 的数量。对于像 http 这样的短请求来说，出现 orphan 的概率会比较大。
+實際上 orphan socket 對於應用來說是無用的，因此內核希望盡可能減小 orphan 的數量。對於像 http 這樣的短請求來說，出現 orphan 的概率會比較大。
 
-对于系统允许的最大 orphan 数量，以及当前的 orphan 数量可以通过如下方式查看：
+對於系統允許的最大 orphan 數量，以及當前的 orphan 數量可以通過如下方式查看：
 
 ```
 $ cat /proc/sys/net/ipv4/tcp_max_orphans
@@ -225,9 +225,9 @@ TCP: inuse 37 orphan 14 tw 8 alloc 39 mem 9
 ... ...
 ```
 
-你可能会发现，sockstat 中的 orphan 数量要远小于 tcp_max_orphans 的数目。
+你可能會發現，sockstat 中的 orphan 數量要遠小於 tcp_max_orphans 的數目。
 
-实际上，可以从代码中看到，实际会有个偏移量 shift，该值范围为 [0, 2] 。
+實際上，可以從代碼中看到，實際會有個偏移量 shift，該值範圍為 [0, 2] 。
 
 ```
 static inline bool tcp_too_many_orphans(struct sock *sk, int shift)
@@ -244,66 +244,66 @@ static inline bool tcp_too_many_orphans(struct sock *sk, int shift)
 }
 ```
 
-也就是说，在某些场景下会对 orphan 做些惩罚，将 orphan 的数量 2x 甚至 4x，这也就解释了上述的问题。
+也就是說，在某些場景下會對 orphan 做些懲罰，將 orphan 的數量 2x 甚至 4x，這也就解釋了上述的問題。
 
-如果是这样，那么就可以根据具体的情况，将 tcp_max_orphans 值适当调大。
+如果是這樣，那麼就可以根據具體的情況，將 tcp_max_orphans 值適當調大。
 
 ### sysctl
-有些 sysctl 的配置项的值也需要关心下：
+有些 sysctl 的配置項的值也需要關心下：
 
 * net.netfilter.nf_conntrack_max
 * net.netfilter.nf_conntrack_count
-* fs.file-max 、fs.file-nr 这两个参数可能更需要关注单个进程内的值。
-还有一些我们自己调整过的、对业务会有影响的项。比如 ip_forward.
+* fs.file-max 、fs.file-nr 這兩個參數可能更需要關注單個進程內的值。
+還有一些我們自己調整過的、對業務會有影響的項。比如 ip_forward.
 
-### Procfs 文件系统
+### Procfs 檔案系統
 
-* /proc/net/tcp：记录 TCP 的状态信息。
+* /proc/net/tcp：記錄 TCP 的狀態資訊。
 
-# TCP 状态排查
+# TCP 狀態排查
 
-可以通过如下命令查看 TCP 状态。
+可以通過如下命令查看 TCP 狀態。
 
------ 查看链接状态，并对其进行统计，如下的两种方法相同
+----- 查看連結狀態，並對其進行統計，如下的兩種方法相同
 
 ```
 $ netstat -atn | awk '/^tcp/ {++s[$NF]} END {for(key in s) print s[key], "\t", key}' | sort -nr
 $ ss -ant | awk ' {++s[$1]} END {for(key in s) print s[key], "\t", key}' | sort -nr
 ```
 
------ 查找较多time_wait连接
+----- 查找較多time_wait連接
 
 ```
 $ netstat -n|grep TIME_WAIT|awk '{print $5}'|sort|uniq -c|sort -rn|head -n20
 ```
 
------ 对接的IP进行排序
+----- 對接的IP進行排序
 
 ```
 $ netstat -ntu | awk '/^tcp/ {print $5}' | cut -d: -f1 | sort | uniq -c | sort -n
 ```
 
------ 查看80端口连接数最多的20个IP
+----- 查看80埠連接數最多的20個IP
 
 ```
 $ netstat -ant |awk '/:80/{split($5,ip,":");++A[ip[1]]}END{for(i in A) print A[i],i}' |sort -rn|head -n20
 ```
 
------ 80端口的各个TCP链接状态
+----- 80埠的各個TCP連結狀態
 
 ```
 $ netstat -n | grep `hostname -i`:80 |awk '/^tcp/{++S[$NF]}END{for (key in S) print key,S[key]}'
 ```
 
-# 硬件层面
-* 电源健康状态。是不是两路电都在。
+# 硬體層面
+* 電源健康狀態。是不是兩路電都在。
 
-* 硬盘的健康状态。 分区是否可写。
+* 硬碟的健康狀態。 分區是否可寫。
 
-* raid 卡的健康状态。
+* raid 卡的健康狀態。
 
-* 远控卡是不是可用。
+* 遠控卡是不是可用。
 
-* 远控卡中的异常日志。
+* 遠控卡中的異常日誌。
 
-* 网卡的工作状态是否正常。
+* 網卡的工作狀態是否正常。
