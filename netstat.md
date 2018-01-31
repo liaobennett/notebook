@@ -65,6 +65,46 @@ FRAG: inuse 0 memory 0
 
 其中的 mem 表示使用了多少 Pages，如果相比 tcp_mem 的配置来说还很小，那么就有可能是由于 orphan sockets 导致的。
 
+#### orphan sockets
+
+首先介绍一下什么是 orphan sockets，简单来说就是该 socket 不与任何一个文件描述符相关联。例如，当应用调用 close() 关闭一个链接时，此时该 socket 就成为了 orphan，但是该 sock 仍然会保留一段时间，直到最后根据 TCP 协议结束。
+
+实际上 orphan socket 对于应用来说是无用的，因此内核希望尽可能减小 orphan 的数量。对于像 http 这样的短请求来说，出现 orphan 的概率会比较大。
+
+对于系统允许的最大 orphan 数量，以及当前的 orphan 数量可以通过如下方式查看：
+
+```
+$ cat /proc/sys/net/ipv4/tcp_max_orphans
+32768
+$ cat /proc/net/sockstat
+... ...
+TCP: inuse 37 orphan 14 tw 8 alloc 39 mem 9
+... ...
+```
+
+你可能会发现，sockstat 中的 orphan 数量要远小于 tcp_max_orphans 的数目。
+
+实际上，可以从代码中看到，实际会有个偏移量 shift，该值范围为 [0, 2] 。
+
+```
+static inline bool tcp_too_many_orphans(struct sock *sk, int shift)
+{
+    struct percpu_counter *ocp = sk->sk_prot->orphan_count;
+    int orphans = percpu_counter_read_positive(ocp);
+
+    if (orphans << shift > sysctl_tcp_max_orphans) {
+        orphans = percpu_counter_sum_positive(ocp);
+        if (orphans << shift > sysctl_tcp_max_orphans)
+            return true;
+    }
+    return false;
+}
+```
+
+也就是说，在某些场景下会对 orphan 做些惩罚，将 orphan 的数量 2x 甚至 4x，这也就解释了上述的问题。
+
+如果是这样，那么就可以根据具体的情况，将 tcp_max_orphans 值适当调大。
+
 ### Procfs 文件系统
 
 * /proc/net/tcp：记录 TCP 的状态信息。
