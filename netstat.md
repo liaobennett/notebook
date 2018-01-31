@@ -32,3 +32,31 @@
 ``` $ cat /proc/net/netstat | awk '/TcpExt/ { print $21,$22 }' ```
 
 如果使用 netstat 命令，有丢包时会看到 “times the listen queue of a socket overflowed” 以及 “SYNs to LISTEN sockets ignored” 对应行前面的数字；如果值为 0 则不会输出对应的行。
+
+### Out of memory
+
+如上所示，出现内存不足可能会有两种情况：
+
+* 有太多的 orphan sockets，通常对于一些前端的服务器经常会出现这种情况。
+
+* 分配给 TCP 的内存确实较少，从而导致内存不足。
+
+#### 内存不足
+
+这个比较好排查，只需要查看一下实际分配给 TCP 多少内存，现在时用了多少内存即可。需要注意的是，通常的配置项使用的单位是 Bytes，在此用的是 Pages，通常为 4K 。
+
+先查看下给 TCP 分配了多少内存。
+
+``` $ cat /proc/net/sockstat
+sockets: used 855
+TCP: inuse 17 orphan 1 tw 0 alloc 19 mem 3
+UDP: inuse 16 mem 10
+UDPLITE: inuse 0
+RAW: inuse 1
+FRAG: inuse 0 memory 0 ```
+
+其中的 mem 表示使用了多少 Pages，如果相比 tcp_mem 的配置来说还很小，那么就有可能是由于 orphan sockets 导致的。
+
+### Procfs 文件系统
+
+*/proc/net/tcp：记录 TCP 的状态信息。
