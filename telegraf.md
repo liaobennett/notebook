@@ -15,9 +15,8 @@
   logfile = ""
   hostname = ""
   omit_hostname = false
-###############################################################################
-#                            OUTPUT PLUGINS                                   #
-###############################################################################
+
+#OUTPUT PLUGINS
 [[outputs.influxdb]]
   urls = ["http://192.168.188.91:8086"]
   database = "couchbase"
@@ -25,9 +24,7 @@
   write_consistency = "any"
   timeout = "5s"
   
-###############################################################################
-#                            INPUT PLUGINS                                    #
-###############################################################################
+#INPUT PLUGINS
 [[inputs.cpu]]
   percpu = true
   totalcpu = true
