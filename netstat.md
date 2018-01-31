@@ -6,7 +6,7 @@
 ### tcp
 
 * ActiveOpens:主动打开的tcp连接数量。
-* * PassiveOpens:被动打开的tcp连接数量。
+* PassiveOpens:被动打开的tcp连接数量。
 * InSegs: 收到的tcp报文数量。
 * OutSegs:发出的tcp报文数量。
 * EstabResets: established 中发生的 reset。
@@ -37,6 +37,45 @@
 collectd 默认会把每个 TCP 状态的连接数都采集下来。
 
 这些指标可能不需要报警。但是收集起来用来排查问题、查看网络负载很有用。
+
+### 网卡
+这些指标是网卡的统计数据，可以用 ethtool -S ethx 看到。数据源来自：/proc/net/dev和 /sys/class/net/*/statistics/*。
+
+* net.if.in.bytes : 收到的数据的总 bytes.
+
+* net.if.in.dropped: 进入了 ring buffer， 在拷贝到内存的时候被丢了。
+
+* net.if.in.errors: 收到的错误包的总数。错误包包括：crc 校验错误、帧同步错误、ring buffer溢出等。
+
+* net.if.in.fifo.errs: 这个是 ifconfig 里看到的 overruns.表示数据包没到 ring buffer 就被丢了。也就是 cpu 来不及处理 ringbuffer 里的数据，通常在网卡压力大、没有做affinity的时候会发生。
+
+* net.if.in.frame.errs: misaligned frames. frame 的长度（bit）不能被 8 整除。
+
+* net.if.in.multicast: 组播。
+
+* net.if.in.packets: 收到的 packets 数量统计。
+
+* net.if.out.bytes
+
+* net.if.out.carrier.errs: 这个意味着物理层出问题了。比如网卡的工作模式不对。
+
+* net.if.out.collisions： 因为 CSMA/CD 造成的传输错误。
+
+* net.if.out.dropped
+
+* net.if.out.errors
+
+* net.if.out.fifo.errs
+
+* net.if.out.packets
+
+* net.if.total.bytes
+
+* net.if.total.dropped
+
+网卡的工作模式。全双工千兆/万兆。
+
+网络压力大的服务，是有必要做中断的 affinity 和提高 ring buffer 值的。
 
 ## netstat参数和使用
 
