@@ -1,6 +1,18 @@
 # netstat
 ## netstat -st输出的两个重要信息来源分别是/proc/net/snmp和/proc/net/netstat
 
+## netstat参数和使用
+常用参数-anplt
+-a 显示所有活动的连接以及本机侦听的TCP、UDP端口
+-l 显示监听的server port
+-n 直接使用IP地址，不通过域名服务器
+-p 正在使用Socket的程序PID和程序名称
+-r 显示路由表
+-t 显示TCP传输协议的连线状况
+-u 显示UDP传输协议的连线状况
+-w 显示RAW传输协议的连线状况
+
+在Linux下，raw格式的数据通常可以通过/proc/net/dev获得。在Windows平台，netstat信息可以通过IP Helper API的GetTcpTable和GetUdpTable函数获得。
 
 ## Linux 网络常见监控项以及报错
 ### 查看丢包
