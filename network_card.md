@@ -9,7 +9,7 @@ cat /proc/net/dev
 Inter-|   Receive                                                |  Transmit
  face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed
 eno16777736: 1150470   14704    0    0    0     0          0         0   720003    7105    0    0    0     0       0          0
-    lo: 1720952079 1301029    0    0    0     0          0         0 1720952079 1301029    0    0    0     0       0          0
+         lo: 1720952079 1301029    0    0    0     0          0         0 1720952079 1301029    0    0    0     0       0          0
 eno33554960:  300255    3030    0    0    0     0          0         0     8142      44    0    0    0     0       0          0
 ```
 
