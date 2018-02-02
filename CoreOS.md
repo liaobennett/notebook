@@ -12,3 +12,7 @@ Red Hat Enterprise Linux增加驅動程序的靈活性和便捷性使得Kubernet
 一旦部署了集群, 請按照配置和加入運行紅帽企業版Linux的其他worker nodes。
 
 ### 架構
+
+#### 部署
+
+####　執行
