@@ -13,7 +13,7 @@ depth 表示最大遞迴的層數，如果物件很複雜，你可以指定層�
 
 特別要指出的是，util.inspect 並不會簡單地直接把物件轉換為字串，即使該對 象定義了toString 方法也不會調用。
 
-'''
+```
 var util = require('util');
 function Person() {
     this.name = 'byvoid';
@@ -24,4 +24,4 @@ function Person() {
 var obj = new Person();
 console.log(util.inspect(obj));
 console.log(util.inspect(obj, true));
-'''
+```
