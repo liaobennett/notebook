@@ -1,10 +1,14 @@
 # 名詞
 
-request  請求
+### request  
 
-response 回應
+請求
 
-prototype 
+### response 
+
+回應
+
+### prototype 
 
 這個字沒有一定的中文翻譯，如果硬是要說，也許會說「原型」，也聽過有人說「雛型」。
 
